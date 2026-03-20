@@ -1,123 +1,524 @@
 
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trexo — Checklist de Lanzamiento</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; }
-.wrap { padding: 1rem 0; font-family: var(--font-sans); }
-.phase { margin-bottom: 1.5rem; }
-.phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem; }
-.phase-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
-.phase-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
-.phase-counter { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; }
-.items { display: flex; flex-direction: column; gap: 6px; }
-.item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); cursor: pointer; transition: background 0.15s; }
-.item:hover { background: var(--color-background-secondary); }
-.item.done { background: var(--color-background-secondary); }
-.item.done .item-text { text-decoration: line-through; color: var(--color-text-tertiary); }
-.checkbox { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--color-border-secondary); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-.item.done .checkbox { background: #1D9E75; border-color: #1D9E75; }
-.checkmark { display: none; width: 10px; height: 7px; }
-.checkmark::before { content: ''; display: block; width: 10px; height: 7px; border-left: 2px solid white; border-bottom: 2px solid white; transform: rotate(-45deg) translate(1px, -2px); }
-.item.done .checkmark { display: block; }
-.item-text { font-size: 14px; color: var(--color-text-primary); line-height: 1.5; flex: 1; }
-.item-text strong { font-weight: 500; }
-.progress-bar-wrap { height: 4px; background: var(--color-background-secondary); border-radius: 2px; margin-bottom: 1.5rem; overflow: hidden; }
-.progress-bar { height: 4px; background: #1D9E75; border-radius: 2px; transition: width 0.3s; }
-.progress-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  :root {
+    --green: #00C17C;
+    --green-dark: #00A067;
+    --green-dim: rgba(0,193,124,0.12);
+    --amber: #F5A623;
+    --amber-dim: rgba(245,166,35,0.12);
+    --blue: #4F8EF7;
+    --blue-dim: rgba(79,142,247,0.12);
+    --red: #FF5C5C;
+    --bg: #0D0D0D;
+    --surface: #161616;
+    --surface2: #1E1E1E;
+    --border: rgba(255,255,255,0.07);
+    --text: #F0EDE8;
+    --muted: rgba(240,237,232,0.45);
+    --faint: rgba(240,237,232,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* Header */
+  .header {
+    padding: 48px 24px 36px;
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--green);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: #0D0D0D;
+    letter-spacing: -1px;
+  }
+
+  .logo-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+  }
+
+  h1 span { color: var(--green); }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 32px;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .progress-count {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .progress-track {
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid transparent;
+  }
+
+  .stat-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .stat-pill.s-pending { background: var(--surface2); border-color: var(--border); color: var(--muted); }
+  .stat-pill.s-pending .stat-dot { background: var(--faint); }
+  .stat-pill.s-iniciado { background: var(--amber-dim); border-color: rgba(245,166,35,0.2); color: var(--amber); }
+  .stat-pill.s-iniciado .stat-dot { background: var(--amber); }
+  .stat-pill.s-finalizado { background: var(--green-dim); border-color: rgba(0,193,124,0.2); color: var(--green); }
+  .stat-pill.s-finalizado .stat-dot { background: var(--green); }
+
+  /* Phases */
+  .phases {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .phase {}
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    flex: 1;
+  }
+
+  .phase-progress {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* Items */
+  .items { display: flex; flex-direction: column; gap: 6px; }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    user-select: none;
+    position: relative;
+  }
+
+  .item:hover { border-color: rgba(255,255,255,0.13); transform: translateX(2px); }
+
+  .item.st-iniciado { border-color: rgba(245,166,35,0.25); background: #1A1810; }
+  .item.st-finalizado { border-color: rgba(0,193,124,0.2); background: #0E1612; }
+  .item.st-finalizado .item-title { text-decoration: line-through; color: var(--muted); }
+  .item.st-finalizado .item-desc { color: var(--faint); }
+
+  .status-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .item.st-iniciado .status-btn {
+    border-color: var(--amber);
+    background: var(--amber-dim);
+  }
+
+  .item.st-finalizado .status-btn {
+    border-color: var(--green);
+    background: var(--green);
+  }
+
+  .status-icon { font-size: 11px; line-height: 1; }
+
+  .item-body { flex: 1; min-width: 0; }
+
+  .item-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 3px;
+    transition: color 0.2s;
+  }
+
+  .item-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    font-weight: 300;
+    transition: color 0.2s;
+  }
+
+  .status-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    align-self: flex-start;
+  }
+
+  .st-pending-tag { background: var(--surface2); color: var(--faint); }
+  .st-iniciado-tag { background: var(--amber-dim); color: var(--amber); }
+  .st-finalizado-tag { background: var(--green-dim); color: var(--green); }
+
+  /* Phase color variants */
+  .ph-blue .phase-num { background: var(--blue-dim); color: var(--blue); }
+  .ph-teal .phase-num { background: rgba(0,193,124,0.15); color: #00C17C; }
+  .ph-green .phase-num { background: rgba(80,180,80,0.12); color: #6DD96D; }
+  .ph-amber .phase-num { background: var(--amber-dim); color: var(--amber); }
+  .ph-purple .phase-num { background: rgba(150,100,255,0.12); color: #B07AFF; }
+  .ph-red .phase-num { background: rgba(255,92,92,0.12); color: var(--red); }
+
+  /* Footer */
+  .footer {
+    max-width: 720px;
+    margin: 48px auto 0;
+    padding: 0 24px;
+    font-size: 12px;
+    color: var(--faint);
+    text-align: center;
+  }
+
+  /* Instruction bar */
+  .hint-bar {
+    max-width: 720px;
+    margin: 0 auto 24px;
+    padding: 0 24px;
+  }
+
+  .hint {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hint-icon { font-size: 13px; }
+
+  @media (max-width: 480px) {
+    .header { padding: 32px 16px 24px; }
+    .progress-wrap, .phases, .hint-bar { padding-left: 16px; padding-right: 16px; }
+  }
 </style>
-<div class="wrap" id="app"></div>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-row">
+    <div class="logo-mark">T</div>
+    <span class="logo-name">trexo</span>
+  </div>
+  <h1>Checklist de<br><span>lanzamiento</span></h1>
+  <p class="subtitle">Todas las tareas para que Trexo esté oficialmente operativa.</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-meta">
+    <span class="progress-label">Progreso general</span>
+    <span class="progress-count" id="prog-count">0 / 19</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-pill s-pending"><div class="stat-dot"></div><span id="cnt-pending">19 pendientes</span></div>
+    <div class="stat-pill s-iniciado"><div class="stat-dot"></div><span id="cnt-iniciado">0 iniciados</span></div>
+    <div class="stat-pill s-finalizado"><div class="stat-dot"></div><span id="cnt-finalizado">0 finalizados</span></div>
+  </div>
+</div>
+
+<div class="hint-bar">
+  <div class="hint">
+    <span class="hint-icon">👆</span>
+    <span>Hacé click en el ícono de cada tarea para cambiar su estado: <strong>pendiente → iniciado → finalizado</strong></span>
+  </div>
+</div>
+
+<div class="phases" id="phases-container"></div>
+
+<div class="footer">
+  <p>El progreso se guarda automáticamente en tu navegador · trexo.com.ar</p>
+</div>
+
 <script>
 const phases = [
   {
-    id: 1, label: "Fase 1", title: "La base técnica",
-    color: "#185FA5", bg: "#E6F1FB",
+    id: 1, cls: "ph-blue", label: "Fase 1", title: "La base técnica",
     items: [
-      { id: "1a", text: "<strong>Delegar el dominio</strong>: Conectar trexo.com.ar desde NIC.ar hacia Netlify para que la web ya sea pública." },
-      { id: "1b", text: "<strong>Crear el mail corporativo</strong>: Dar de alta hola@trexo.com.ar usando Zoho Mail (gratis para 5 cuentas) o Hostinger." },
-      { id: "1c", text: "<strong>Actualizar la web</strong>: Cambiar los links de las redes para que apunten a @somostrexo y poner el mail corporativo en el HTML." },
+      { id: "1a", title: "Delegar el dominio", desc: "Conectar trexo.com.ar desde NIC.ar hacia Netlify para que la web ya sea pública." },
+      { id: "1b", title: "Crear el mail corporativo", desc: "Dar de alta hola@trexo.com.ar usando Zoho Mail (gratis para 5 cuentas) o Hostinger." },
+      { id: "1c", title: "Actualizar la web", desc: "Cambiar los links de las redes para que apunten a @somostrexo y poner el mail corporativo en el HTML." },
     ]
   },
   {
-    id: 15, label: "Fase 1.5", title: "Métricas e instrumentación",
-    color: "#3B6D11", bg: "#EAF3DE",
+    id: 15, cls: "ph-green", label: "Fase 1.5", title: "Métricas e instrumentación",
     items: [
-      { id: "15a", text: "<strong>Google Search Console</strong>: Verificar la propiedad de trexo.com.ar y enviar el sitemap para que Google empiece a indexar la web." },
-      { id: "15b", text: "<strong>Google Tag Manager</strong>: Crear el contenedor GTM e insertar el snippet en el HTML de la web. Todo el tracking va a pasar por acá." },
-      { id: "15c", text: "<strong>Google Analytics 4</strong>: Crear la propiedad GA4 y conectarla a la web a través de Tag Manager (no directo en el código)." },
+      { id: "15a", title: "Google Search Console", desc: "Verificar la propiedad de trexo.com.ar y enviar el sitemap para que Google empiece a indexar la web." },
+      { id: "15b", title: "Google Tag Manager", desc: "Crear el contenedor GTM e insertar el snippet en el HTML de la web. Todo el tracking va a pasar por acá." },
+      { id: "15c", title: "Google Analytics 4", desc: "Crear la propiedad GA4 y conectarla a la web a través de Tag Manager (no directo en el código)." },
     ]
   },
   {
-    id: 2, label: "Fase 2", title: "Atención al cliente",
-    color: "#0F6E56", bg: "#E1F5EE",
+    id: 2, cls: "ph-teal", label: "Fase 2", title: "Atención al cliente",
     items: [
-      { id: "2a", text: "<strong>WhatsApp Business</strong>: Comprar chip prepago nuevo, instalar WhatsApp Business. Configurar mensaje de ausencia y catálogo rápido." },
-      { id: "2b", text: "<strong>Conectar el Chatbot</strong>: Subir el código de GitHub/Google Sheets y vincularlo al número nuevo de WhatsApp." },
-      { id: "2c", text: "<strong>Lanzamiento en Instagram</strong>: Subir logo, poner la biografía y publicar el primer posteo anunciando que la web está activa." },
+      { id: "2a", title: "WhatsApp Business", desc: "Comprar chip prepago nuevo, instalar WhatsApp Business. Configurar mensaje de ausencia y catálogo rápido." },
+      { id: "2b", title: "Conectar el Chatbot", desc: "Subir el código de GitHub/Google Sheets y vincularlo al número nuevo de WhatsApp." },
+      { id: "2c", title: "Lanzamiento en Instagram", desc: "Subir logo, poner la biografía y publicar el primer posteo anunciando que la web está activa." },
     ]
   },
   {
-    id: 3, label: "Fase 3", title: "Material comercial",
-    color: "#854F0B", bg: "#FAEEDA",
+    id: 3, cls: "ph-amber", label: "Fase 3", title: "Material comercial",
     items: [
-      { id: "3a", text: "<strong>Definir Precios</strong>: Dejar fijos los 3 planes en la web (Starter, Crecimiento, A medida)." },
-      { id: "3b", text: "<strong>Deck para clientes</strong>: PDF de 5 diapositivas en Canva con propuesta de valor, cómo trabajan y precios." },
-      { id: "3c", text: "<strong>Script para el vendedor</strong>: Documento con cómo saludar, qué preguntar al dueño del local y cómo rebatir objeciones." },
-      { id: "3d", text: "<strong>SOP interno</strong>: Google Docs privado con contraseñas, links a GitHub, cómo reiniciar el bot y subir cambios a Netlify." },
+      { id: "3a", title: "Definir precios", desc: "Dejar fijos los 3 planes en la web: Starter, Crecimiento y A medida." },
+      { id: "3b", title: "Deck para clientes", desc: "PDF de 5 diapositivas en Canva con propuesta de valor, cómo trabajan y precios. Se manda por WhatsApp." },
+      { id: "3c", title: "Script para el vendedor", desc: "Documento con cómo saludar, qué preguntar al dueño del local y cómo rebatir objeciones (\"es muy caro\", \"ya tengo Instagram\")." },
+      { id: "3d", title: "SOP interno", desc: "Google Docs privado con contraseñas, links a GitHub, cómo reiniciar el bot y subir cambios a Netlify." },
     ]
   },
   {
-    id: 4, label: "Fase 4", title: "Legal y administrativo",
-    color: "#533AB7", bg: "#EEEDFE",
+    id: 4, cls: "ph-purple", label: "Fase 4", title: "Legal y administrativo",
     items: [
-      { id: "4a", text: "<strong>Contrato modelo</strong>: PDF que el cliente firma. Debe incluir qué abarca el servicio, qué NO incluye, tiempos y responsabilidades." },
-      { id: "4b", text: "<strong>Facturación y cobro</strong>: Definir cuentas bancarias/MercadoPago y tener listos los datos de Monotributo/AFIP." },
+      { id: "4a", title: "Contrato modelo", desc: "PDF que el cliente firma. Qué incluye, qué NO incluye (clave), tiempos de entrega y responsabilidades." },
+      { id: "4b", title: "Método de facturación y cobro", desc: "Definir cuentas bancarias/MercadoPago y tener listos los datos de Monotributo/AFIP." },
     ]
   },
   {
-    id: 5, label: "Fase 5 🚨", title: "Lo que te estabas olvidando",
-    color: "#A32D2D", bg: "#FCEBEB",
+    id: 5, cls: "ph-red", label: "Fase 5 🚨", title: "Lo que te estabas olvidando",
     items: [
-      { id: "5a", text: "<strong>Cobro del 50% por adelantado</strong>: Nunca arranquen sin seña. 50% para empezar, 50% contra entrega. Pónganlo en el contrato." },
-      { id: "5b", text: "<strong>Google Mi Negocio</strong>: Dar de alta a Trexo en Google Maps como \"Área de servicio\" en Buenos Aires para juntar reseñas." },
-      { id: "5c", text: "<strong>Link en Bio (Linktree)</strong>: Crear trexo.com.ar/links con botones hacia WhatsApp, la web y la demo del menú." },
+      { id: "5a", title: "Cobro del 50% por adelantado", desc: "Nunca arranquen sin seña. 50% para empezar, 50% contra entrega. Pónganlo en el contrato." },
+      { id: "5b", title: "Google Mi Negocio", desc: "Dar de alta a Trexo en Google Maps como \"Área de servicio\" en Buenos Aires para juntar reseñas." },
+      { id: "5c", title: "Link en Bio (Linktree)", desc: "Crear trexo.com.ar/links con botones hacia WhatsApp, la web y la demo del menú." },
     ]
   }
 ];
 
-const STORAGE_KEY = 'trexo_checklist_v1';
-let checked = {};
-try { const s = localStorage.getItem(STORAGE_KEY); if (s) checked = JSON.parse(s); } catch(e) {}
-function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checked)); } catch(e) {} }
-function totalItems() { return phases.reduce((a, p) => a + p.items.length, 0); }
-function totalDone() { return Object.values(checked).filter(Boolean).length; }
-function toggle(id) { checked[id] = !checked[id]; save(); render(); }
+const STATES = ['pending', 'iniciado', 'finalizado'];
+const ICONS = { pending: '', iniciado: '◐', finalizado: '✓' };
+const LABELS = { pending: 'Pendiente', iniciado: 'Iniciado', finalizado: 'Finalizado' };
+const KEY = 'trexo_checklist_v2';
+
+let state = {};
+try { const s = localStorage.getItem(KEY); if (s) state = JSON.parse(s); } catch(e) {}
+
+function getState(id) { return state[id] || 'pending'; }
+function nextState(id) {
+  const cur = STATES.indexOf(getState(id));
+  state[id] = STATES[(cur + 1) % STATES.length];
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function allItems() { return phases.flatMap(p => p.items); }
+
+function updateStats() {
+  const items = allItems();
+  const total = items.length;
+  const fin = items.filter(i => getState(i.id) === 'finalizado').length;
+  const ini = items.filter(i => getState(i.id) === 'iniciado').length;
+  const pen = total - fin - ini;
+  const pct = Math.round(fin / total * 100);
+
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-count').textContent = fin + ' / ' + total;
+  document.getElementById('cnt-pending').textContent = pen + ' pendiente' + (pen !== 1 ? 's' : '');
+  document.getElementById('cnt-iniciado').textContent = ini + ' iniciado' + (ini !== 1 ? 's' : '');
+  document.getElementById('cnt-finalizado').textContent = fin + ' finalizado' + (fin !== 1 ? 's' : '');
+
+  phases.forEach(phase => {
+    const phaseFin = phase.items.filter(i => getState(i.id) === 'finalizado').length;
+    const el = document.querySelector('[data-phase-prog="' + phase.id + '"]');
+    if (el) el.textContent = phaseFin + '/' + phase.items.length;
+  });
+}
+
+function renderItem(item) {
+  const st = getState(item.id);
+  const div = document.createElement('div');
+  div.className = 'item st-' + st;
+  div.dataset.itemId = item.id;
+  div.innerHTML = `
+    <div class="status-btn" title="Cambiar estado">
+      <span class="status-icon">${ICONS[st]}</span>
+    </div>
+    <div class="item-body">
+      <div class="item-title">${item.title}</div>
+      <div class="item-desc">${item.desc}</div>
+    </div>
+    <span class="status-tag st-${st}-tag">${LABELS[st]}</span>
+  `;
+  div.querySelector('.status-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    nextState(item.id);
+    const newSt = getState(item.id);
+    div.className = 'item st-' + newSt;
+    div.querySelector('.status-icon').textContent = ICONS[newSt];
+    div.querySelector('.status-tag').className = 'status-tag st-' + newSt + '-tag';
+    div.querySelector('.status-tag').textContent = LABELS[newSt];
+    updateStats();
+  });
+  return div;
+}
 
 function render() {
-  const done = totalDone(), total = totalItems(), pct = Math.round(done / total * 100);
-  let html = `
-    <div class="progress-label"><span style="color:var(--color-text-primary);font-weight:500">Progreso general</span><span>${done} / ${total} completados</span></div>
-    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
-  `;
+  const container = document.getElementById('phases-container');
   phases.forEach(phase => {
-    const phaseDone = phase.items.filter(i => checked[i.id]).length;
-    html += `
-      <div class="phase">
-        <div class="phase-header">
-          <span class="phase-badge" style="background:${phase.bg};color:${phase.color}">${phase.label}</span>
-          <span class="phase-title">${phase.title}</span>
-          <span class="phase-counter">${phaseDone}/${phase.items.length}</span>
-        </div>
-        <div class="items">
-          ${phase.items.map(item => `
-            <div class="item${checked[item.id] ? ' done' : ''}" onclick="toggle('${item.id}')">
-              <div class="checkbox"><div class="checkmark"></div></div>
-              <div class="item-text">${item.text}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
+    const phaseEl = document.createElement('div');
+    phaseEl.className = 'phase ' + phase.cls;
+
+    const header = document.createElement('div');
+    header.className = 'phase-header';
+    header.innerHTML = `
+      <span class="phase-num">${phase.label}</span>
+      <span class="phase-title">${phase.title}</span>
+      <span class="phase-progress" data-phase-prog="${phase.id}">0/${phase.items.length}</span>
     `;
+    phaseEl.appendChild(header);
+
+    const itemsEl = document.createElement('div');
+    itemsEl.className = 'items';
+    phase.items.forEach(item => itemsEl.appendChild(renderItem(item)));
+    phaseEl.appendChild(itemsEl);
+    container.appendChild(phaseEl);
   });
-  document.getElementById('app').innerHTML = html;
+  updateStats();
 }
+
 render();
 </script>
+</body>
+</html>
