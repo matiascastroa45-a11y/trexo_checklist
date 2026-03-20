@@ -433,13 +433,33 @@ const LABELS = { pending: 'Pendiente', iniciado: 'Iniciado', finalizado: 'Finali
 const KEY = 'trexo_checklist_v2';
 
 let state = {};
-try { const s = localStorage.getItem(KEY); if (s) state = JSON.parse(s); } catch(e) {}
+
+function loadState() {
+  try { const s = localStorage.getItem(KEY); if (s) { state = JSON.parse(s); return; } } catch(e) {}
+  try { const s = sessionStorage.getItem(KEY); if (s) { state = JSON.parse(s); return; } } catch(e) {}
+  try {
+    const cookies = document.cookie.split(';');
+    for (const c of cookies) {
+      const [k, v] = c.trim().split('=');
+      if (k === KEY && v) { state = JSON.parse(decodeURIComponent(v)); return; }
+    }
+  } catch(e) {}
+}
+
+function save() {
+  const data = JSON.stringify(state);
+  try { localStorage.setItem(KEY, data); } catch(e) {}
+  try { sessionStorage.setItem(KEY, data); } catch(e) {}
+  try { document.cookie = KEY + '=' + encodeURIComponent(data) + '; max-age=31536000; path=/'; } catch(e) {}
+}
+
+loadState();
 
 function getState(id) { return state[id] || 'pending'; }
 function nextState(id) {
   const cur = STATES.indexOf(getState(id));
   state[id] = STATES[(cur + 1) % STATES.length];
-  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {}
+  save();
 }
 
 function allItems() { return phases.flatMap(p => p.items); }
