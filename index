@@ -1,0 +1,123 @@
+
+
+<style>
+* { box-sizing: border-box; }
+.wrap { padding: 1rem 0; font-family: var(--font-sans); }
+.phase { margin-bottom: 1.5rem; }
+.phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem; }
+.phase-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.phase-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+.phase-counter { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; }
+.items { display: flex; flex-direction: column; gap: 6px; }
+.item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); cursor: pointer; transition: background 0.15s; }
+.item:hover { background: var(--color-background-secondary); }
+.item.done { background: var(--color-background-secondary); }
+.item.done .item-text { text-decoration: line-through; color: var(--color-text-tertiary); }
+.checkbox { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--color-border-secondary); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.item.done .checkbox { background: #1D9E75; border-color: #1D9E75; }
+.checkmark { display: none; width: 10px; height: 7px; }
+.checkmark::before { content: ''; display: block; width: 10px; height: 7px; border-left: 2px solid white; border-bottom: 2px solid white; transform: rotate(-45deg) translate(1px, -2px); }
+.item.done .checkmark { display: block; }
+.item-text { font-size: 14px; color: var(--color-text-primary); line-height: 1.5; flex: 1; }
+.item-text strong { font-weight: 500; }
+.progress-bar-wrap { height: 4px; background: var(--color-background-secondary); border-radius: 2px; margin-bottom: 1.5rem; overflow: hidden; }
+.progress-bar { height: 4px; background: #1D9E75; border-radius: 2px; transition: width 0.3s; }
+.progress-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 6px; display: flex; justify-content: space-between; }
+</style>
+<div class="wrap" id="app"></div>
+<script>
+const phases = [
+  {
+    id: 1, label: "Fase 1", title: "La base técnica",
+    color: "#185FA5", bg: "#E6F1FB",
+    items: [
+      { id: "1a", text: "<strong>Delegar el dominio</strong>: Conectar trexo.com.ar desde NIC.ar hacia Netlify para que la web ya sea pública." },
+      { id: "1b", text: "<strong>Crear el mail corporativo</strong>: Dar de alta hola@trexo.com.ar usando Zoho Mail (gratis para 5 cuentas) o Hostinger." },
+      { id: "1c", text: "<strong>Actualizar la web</strong>: Cambiar los links de las redes para que apunten a @somostrexo y poner el mail corporativo en el HTML." },
+    ]
+  },
+  {
+    id: 15, label: "Fase 1.5", title: "Métricas e instrumentación",
+    color: "#3B6D11", bg: "#EAF3DE",
+    items: [
+      { id: "15a", text: "<strong>Google Search Console</strong>: Verificar la propiedad de trexo.com.ar y enviar el sitemap para que Google empiece a indexar la web." },
+      { id: "15b", text: "<strong>Google Tag Manager</strong>: Crear el contenedor GTM e insertar el snippet en el HTML de la web. Todo el tracking va a pasar por acá." },
+      { id: "15c", text: "<strong>Google Analytics 4</strong>: Crear la propiedad GA4 y conectarla a la web a través de Tag Manager (no directo en el código)." },
+    ]
+  },
+  {
+    id: 2, label: "Fase 2", title: "Atención al cliente",
+    color: "#0F6E56", bg: "#E1F5EE",
+    items: [
+      { id: "2a", text: "<strong>WhatsApp Business</strong>: Comprar chip prepago nuevo, instalar WhatsApp Business. Configurar mensaje de ausencia y catálogo rápido." },
+      { id: "2b", text: "<strong>Conectar el Chatbot</strong>: Subir el código de GitHub/Google Sheets y vincularlo al número nuevo de WhatsApp." },
+      { id: "2c", text: "<strong>Lanzamiento en Instagram</strong>: Subir logo, poner la biografía y publicar el primer posteo anunciando que la web está activa." },
+    ]
+  },
+  {
+    id: 3, label: "Fase 3", title: "Material comercial",
+    color: "#854F0B", bg: "#FAEEDA",
+    items: [
+      { id: "3a", text: "<strong>Definir Precios</strong>: Dejar fijos los 3 planes en la web (Starter, Crecimiento, A medida)." },
+      { id: "3b", text: "<strong>Deck para clientes</strong>: PDF de 5 diapositivas en Canva con propuesta de valor, cómo trabajan y precios." },
+      { id: "3c", text: "<strong>Script para el vendedor</strong>: Documento con cómo saludar, qué preguntar al dueño del local y cómo rebatir objeciones." },
+      { id: "3d", text: "<strong>SOP interno</strong>: Google Docs privado con contraseñas, links a GitHub, cómo reiniciar el bot y subir cambios a Netlify." },
+    ]
+  },
+  {
+    id: 4, label: "Fase 4", title: "Legal y administrativo",
+    color: "#533AB7", bg: "#EEEDFE",
+    items: [
+      { id: "4a", text: "<strong>Contrato modelo</strong>: PDF que el cliente firma. Debe incluir qué abarca el servicio, qué NO incluye, tiempos y responsabilidades." },
+      { id: "4b", text: "<strong>Facturación y cobro</strong>: Definir cuentas bancarias/MercadoPago y tener listos los datos de Monotributo/AFIP." },
+    ]
+  },
+  {
+    id: 5, label: "Fase 5 🚨", title: "Lo que te estabas olvidando",
+    color: "#A32D2D", bg: "#FCEBEB",
+    items: [
+      { id: "5a", text: "<strong>Cobro del 50% por adelantado</strong>: Nunca arranquen sin seña. 50% para empezar, 50% contra entrega. Pónganlo en el contrato." },
+      { id: "5b", text: "<strong>Google Mi Negocio</strong>: Dar de alta a Trexo en Google Maps como \"Área de servicio\" en Buenos Aires para juntar reseñas." },
+      { id: "5c", text: "<strong>Link en Bio (Linktree)</strong>: Crear trexo.com.ar/links con botones hacia WhatsApp, la web y la demo del menú." },
+    ]
+  }
+];
+
+const STORAGE_KEY = 'trexo_checklist_v1';
+let checked = {};
+try { const s = localStorage.getItem(STORAGE_KEY); if (s) checked = JSON.parse(s); } catch(e) {}
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checked)); } catch(e) {} }
+function totalItems() { return phases.reduce((a, p) => a + p.items.length, 0); }
+function totalDone() { return Object.values(checked).filter(Boolean).length; }
+function toggle(id) { checked[id] = !checked[id]; save(); render(); }
+
+function render() {
+  const done = totalDone(), total = totalItems(), pct = Math.round(done / total * 100);
+  let html = `
+    <div class="progress-label"><span style="color:var(--color-text-primary);font-weight:500">Progreso general</span><span>${done} / ${total} completados</span></div>
+    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+  `;
+  phases.forEach(phase => {
+    const phaseDone = phase.items.filter(i => checked[i.id]).length;
+    html += `
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-badge" style="background:${phase.bg};color:${phase.color}">${phase.label}</span>
+          <span class="phase-title">${phase.title}</span>
+          <span class="phase-counter">${phaseDone}/${phase.items.length}</span>
+        </div>
+        <div class="items">
+          ${phase.items.map(item => `
+            <div class="item${checked[item.id] ? ' done' : ''}" onclick="toggle('${item.id}')">
+              <div class="checkbox"><div class="checkmark"></div></div>
+              <div class="item-text">${item.text}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById('app').innerHTML = html;
+}
+render();
+</script>
